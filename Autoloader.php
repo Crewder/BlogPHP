@@ -1,22 +1,13 @@
 <?php
 
-class Autoloader
-{
+declare(strict_types=1);
 
-    static function register()
-    {
-        spl_autoload_register([
-            __CLASS__,
-            'autoload'
-        ]);
+spl_autoload_register(function(string $fqcn){
+    $path =__DIR__ . '/' . str_replace(['App','\\'], ['src', '/'], $fqcn).'.php';
+
+    if (!file_exists($path)){
+        throw new LogicException("Le fichier '$path' est introuvable");
     }
 
-    static function autoload($class)
-    {
-        $class = str_replace(__NAMESPACE__ . '\\', '', $class);
-        $class = str_replace('\\', '/', $class);
-        if (file_exists(__DIR__ . '/' . $class . '.php')) {
-            require __DIR__ . '/' . $class . '.php';
-        }
-    }
-}
+    require_once($path);
+});
